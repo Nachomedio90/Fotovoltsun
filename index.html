@@ -1,67 +1,31 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Calculadora de Generación de Energía Fotovoltaica</title>
-    <meta charset="utf-8">
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-      }
-      h1 {
-        color: #3f51b5;
-      }
-      form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        margin: 20px 0;
-      }
-      input[type="text"],
-      input[type="number"] {
-        padding: 10px;
-        font-size: 16px;
-        margin: 10px;
-        width: 300px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-      }
-      button[type="submit"] {
-        padding: 10px 20px;
-        background-color: #3f51b5;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 16px;
-        margin: 10px;
-      }
-      #map {
-        height: 400px;
-        width: 100%;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Calculadora de Generación de Energía Fotovoltaica</h1>
-    <p>Utilice esta calculadora para determinar el potencial de generación de energía fotovoltaica basándose en los datos estadísticos de heliofania de su ubicación geográfica exacta.</p>
-    <form>
-      <div id="map"></div>
-      <input type="hidden" id="latitude" name="latitude" required />
-      <input type="hidden" id="longitude" name="longitude" required />
-      <input type="number" name="surface" placeholder="Superficie disponible (en metros cuadrados)..." required />
-      <button type="submit">Calcular</button>
-    </form>
-    <script>
-      function initMap() {
-        const form = document.querySelector("form");
-        const mapDiv = document.getElementById("map");
-        const latitudeInput = form.querySelector("input[name=latitude]");
-        const longitudeInput = form.querySelector("input[name=longitude]");
-        const map = new google.maps.Map(mapDiv, {
-          center: { lat: -34.397, lng: 150.644 },
-          zoom: 8,
-        });
-        const marker = new google.maps.Marker({
-          position:
+<div>
+  <h1>Calculadora de Generación de Energía Fotovoltaica</h1>
+  <p>
+    Utilice esta calculadora para determinar el potencial de generación de energía fotovoltaica basado en los datos estadísticos de heliofanía de su ubicación geográfica exacta.
+  </p>
+  <form>
+    <input type="text" name="ubicacion" placeholder="Ingrese su ubicación..." required />
+    <input type="text" name="superficie" placeholder="Ingrese la superficie disponible..." required />
+    <button type="submit">Calcular</button>
+  </form>
+</div>
+<script>
+  const form = document.querySelector("form");
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const ubicacion = form.querySelector("input[name=ubicacion]").value;
+    const superficie = form.querySelector("input[name=superficie]").value;
+
+    fetch("/calculate-photovoltaic-energy-generation", {
+      method: "POST",
+      body: { ubicacion, superficie }
+    }).then((response) => {
+      response.json().then((data) => {
+        // Handle data here
+        // Create a chart with the estimated photovoltaic generation for each month of the year in that location and with that installed surface.
+        // Mostrar una gráfica con el estimado de generación fotovoltaica en cada mes del año en esa ubicación y con esa superficie instalada.
+      });
+    });
+  });
+</script>
