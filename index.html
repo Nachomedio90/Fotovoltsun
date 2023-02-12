@@ -1,35 +1,67 @@
-<div>
-  <h1>Photovoltaic Energy Generation Calculator</h1>
-  <p>
-    Use this calculator to determine the potential for photovoltaic energy generation based on the statistical heliophany data of your exact geographic location.
-  </p>
-  <form>
-    <input type="text" name="location" placeholder="Enter Your Location..." required />
-    <a href="#" id="select-location-link">Select location on map</a>
-    <input type="text" name="month" placeholder="Enter Month..." required />
-    <button type="submit">Calculate</button>
-  </form>
-</div>
-<script>
-  const form = document.querySelector("form");
-  const selectLocationLink = document.querySelector("#select-location-link");
-
-  selectLocationLink.addEventListener("click", (event) => {
-    event.preventDefault();
-    window.open("https://www.google.com/maps/");
-  });
-
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const location = form.querySelector("input[name=location]").value;
-    const month = form.querySelector("input[name=month]").value;
-    fetch("/calculate-photovoltaic-energy-generation", {
-      method: "POST",
-      body: { location, month }
-    }).then((response) => {
-      response.json().then((data) => {
-        // Handle data here
-      });
-    });
-  });
-</script>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Calculadora de Generación de Energía Fotovoltaica</title>
+    <meta charset="utf-8">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+      }
+      h1 {
+        color: #3f51b5;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 20px 0;
+      }
+      input[type="text"],
+      input[type="number"] {
+        padding: 10px;
+        font-size: 16px;
+        margin: 10px;
+        width: 300px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button[type="submit"] {
+        padding: 10px 20px;
+        background-color: #3f51b5;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin: 10px;
+      }
+      #map {
+        height: 400px;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Calculadora de Generación de Energía Fotovoltaica</h1>
+    <p>Utilice esta calculadora para determinar el potencial de generación de energía fotovoltaica basándose en los datos estadísticos de heliofania de su ubicación geográfica exacta.</p>
+    <form>
+      <div id="map"></div>
+      <input type="hidden" id="latitude" name="latitude" required />
+      <input type="hidden" id="longitude" name="longitude" required />
+      <input type="number" name="surface" placeholder="Superficie disponible (en metros cuadrados)..." required />
+      <button type="submit">Calcular</button>
+    </form>
+    <script>
+      function initMap() {
+        const form = document.querySelector("form");
+        const mapDiv = document.getElementById("map");
+        const latitudeInput = form.querySelector("input[name=latitude]");
+        const longitudeInput = form.querySelector("input[name=longitude]");
+        const map = new google.maps.Map(mapDiv, {
+          center: { lat: -34.397, lng: 150.644 },
+          zoom: 8,
+        });
+        const marker = new google.maps.Marker({
+          position:
