@@ -1,53 +1,64 @@
 <div>
-  <h1>Cálculo de Generación de Energía Fotovoltaica</h1>
-  <p>
-    Utilice este calculador para determinar el potencial de generación de energía fotovoltaica basado en los datos estadísticos de heliophany de su ubicación geográfica exacta.
+  <h1 style="text-align: center;">Cálculo de Generación de Energía Fotovoltaica</h1>
+  <p style="text-align: center;">
+    Utilice este calculador para determinar el potencial de generación de energía fotovoltaica basado en los datos estadísticos de heliophany de su ubicación geográfica.
   </p>
-  <form>
-    <div id="map" style="height: 400px; width: 100%;"></div>
-    <input type="hidden" id="latitude" name="latitude" required />
-    <input type="hidden" id="longitude" name="longitude" required />
-    <input type="text" name="surface" placeholder="Ingrese la superficie disponible (m²)..." required />
+  <form style="display: flex; flex-direction: column; align-items: center;">
+    <label for="latitude">Latitud:</label>
+    <input type="text" id="latitude" name="latitude" placeholder="Ingrese la latitud..." required />
+    <label for="longitude">Longitud:</label>
+    <input type="text" id="longitude" name="longitude" placeholder="Ingrese la longitud..." required />
+    <label for="surface">Superficie disponible (m²):</label>
+    <input type="text" id="surface" name="surface" placeholder="Ingrese la superficie disponible (m²)..." required />
     <button type="submit">Calcular</button>
   </form>
+  <canvas id="chart"></canvas>
 </div>
 
-<script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/build/ol.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 <script>
   const form = document.querySelector("form");
-  const latitudeInput = form.querySelector("#latitude");
-  const longitudeInput = form.querySelector("#longitude");
-
-  var map = new ol.Map({
-    target: 'map',
-    layers: [
-      new ol.layer.Tile({
-        source: new ol.source.OSM()
-      })
-    ],
-    view: new ol.View({
-      center: [0, 0],
-      zoom: 2
-    })
-  });
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const latitude = form.querySelector("#latitude").value;
     const longitude = form.querySelector("#longitude").value;
-    const surface = form.querySelector("input[name=surface]").value;
+    const surface = form.querySelector("#surface").value;
 
-    fetch("/calculate-photovoltaic-energy-generation", {
-      method: "POST",
-      body: JSON.stringify({ latitude, longitude, surface }),
-    }).then((response) => {
-      response.json().then((data) => {
-        // Handle data here
-        // Link the response to a web repository, such as Github.
-        window.open(
-          "https://github.com/your_username/calculate-photovoltaic-energy-generation"
-        );
-      });
-    });
-  });
+    // Obtenga la información necesaria de la API de HelioClim
+    fetch(`http://www.helioclim.fr/cgi-bin/fcgi/HelioClim1.fcgi?email=user%40example.com&lat=${latitude}&lon=${longitude}&proj=0&mes1=1&mes2=12&file=json`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        // Calcular la potencia fotovoltaica a partir de la información de la API
+        const monthlyEnergy = data.map((month) => {
+          return month.Ghi * surface * 0.01;
+        });
+
+        // Mostrar el resultado en un gráfico de barras
+        const chart = new Chart(document.getElementById("chart"), {
+          type: "bar",
+          data: {
+            labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+            datasets: [{
+              label:"Generación de Energía Fotovoltaica (kWh)",
+data: monthlyEnergy,
+backgroundColor: "rgba(54, 162, 235, 0.2)",
+borderColor: "rgba(54, 162, 235, 1)",
+borderWidth: 1
+}]
+},
+options: {
+scales: {
+yAxes: [{
+ticks: {
+beginAtZero: true
+}
+}]
+}
+}
+});
+});
+});
 </script>
