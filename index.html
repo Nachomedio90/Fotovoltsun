@@ -1,31 +1,58 @@
 <div>
-  <h1>Calculadora de Generación de Energía Fotovoltaica</h1>
+  <h1>Cálculo de Generación de Energía Fotovoltaica</h1>
   <p>
-    Utilice esta calculadora para determinar el potencial de generación de energía fotovoltaica basado en los datos estadísticos de heliofanía de su ubicación geográfica exacta.
+    Utilice este calculador para determinar el potencial de generación de energía fotovoltaica basado en los datos estadísticos de heliophany de su ubicación geográfica exacta.
   </p>
   <form>
-    <input type="text" name="ubicacion" placeholder="Ingrese su ubicación..." required />
-    <input type="text" name="superficie" placeholder="Ingrese la superficie disponible..." required />
+    <div id="map" style="height: 400px; width: 100%;"></div>
+    <input type="hidden" id="latitude" name="latitude" required />
+    <input type="hidden" id="longitude" name="longitude" required />
+    <input type="text" name="surface" placeholder="Ingrese la superficie disponible (m²)..." required />
     <button type="submit">Calcular</button>
   </form>
 </div>
 <script>
   const form = document.querySelector("form");
+  const latitudeInput = form.querySelector("#latitude");
+  const longitudeInput = form.querySelector("#longitude");
 
+  function initMap() {
+    const map = new google.maps.Map(document.getElementById("map"), {
+      center: { lat: -34.397, lng: 150.644 },
+      zoom: 8,
+    });
+
+    const marker = new google.maps.Marker({
+      position: { lat: -34.397, lng: 150.644 },
+      map: map,
+      draggable: true,
+    });
+
+    marker.addListener("dragend", (event) => {
+      latitudeInput.value = event.latLng.lat();
+      longitudeInput.value = event.latLng.lng();
+    });
+  }
+  
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-    const ubicacion = form.querySelector("input[name=ubicacion]").value;
-    const superficie = form.querySelector("input[name=superficie]").value;
+    const latitude = form.querySelector("#latitude").value;
+    const longitude = form.querySelector("#longitude").value;
+    const surface = form.querySelector("input[name=surface]").value;
 
     fetch("/calculate-photovoltaic-energy-generation", {
       method: "POST",
-      body: { ubicacion, superficie }
+      body: JSON.stringify({ latitude, longitude, surface }),
     }).then((response) => {
       response.json().then((data) => {
         // Handle data here
-        // Create a chart with the estimated photovoltaic generation for each month of the year in that location and with that installed surface.
-        // Mostrar una gráfica con el estimado de generación fotovoltaica en cada mes del año en esa ubicación y con esa superficie instalada.
+        // Link the response to a web repository, such as Github.
+        window.open(
+          "https://github.com/your_username/calculate-photovoltaic-energy-generation"
+        );
       });
     });
   });
 </script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbjKr6I_YVTsC5mKj7VmW5xE-5F5_jKZQ&callback=initMap" async defer></script>
+``
