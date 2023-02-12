@@ -16,24 +16,21 @@
   const latitudeInput = form.querySelector("#latitude");
   const longitudeInput = form.querySelector("#longitude");
 
-  function initMap() {
-    const map = new google.maps.Map(document.getElementById("map"), {
-      center: { lat: -34.397, lng: 150.644 },
-      zoom: 8,
-    });
+  const map = L.map('map').setView([-34.397, 150.644], 8);
 
-    const marker = new google.maps.Marker({
-      position: { lat: -34.397, lng: 150.644 },
-      map: map,
-      draggable: true,
-    });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
 
-    marker.addListener("dragend", (event) => {
-      latitudeInput.value = event.latLng.lat();
-      longitudeInput.value = event.latLng.lng();
-    });
-  }
-  
+  const marker = L.marker([-34.397, 150.644], {
+      draggable: true
+  }).addTo(map);
+
+  marker.on("dragend", function (event) {
+      latitudeInput.value = event.target._latlng.lat;
+      longitudeInput.value = event.target._latlng.lng;
+  });
+
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const latitude = form.querySelector("#latitude").value;
@@ -54,5 +51,5 @@
     });
   });
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbjKr6I_YVTsC5mKj7VmW5xE-5F5_jKZQ&callback=initMap" async defer></script>
-``
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+  integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZ
