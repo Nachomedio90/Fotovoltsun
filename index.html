@@ -11,24 +11,24 @@
     <button type="submit">Calcular</button>
   </form>
 </div>
+
+<script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/build/ol.js"></script>
 <script>
   const form = document.querySelector("form");
   const latitudeInput = form.querySelector("#latitude");
   const longitudeInput = form.querySelector("#longitude");
 
-  const map = L.map('map').setView([-34.397, 150.644], 8);
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  }).addTo(map);
-
-  const marker = L.marker([-34.397, 150.644], {
-      draggable: true
-  }).addTo(map);
-
-  marker.on("dragend", function (event) {
-      latitudeInput.value = event.target._latlng.lat;
-      longitudeInput.value = event.target._latlng.lng;
+  var map = new ol.Map({
+    target: 'map',
+    layers: [
+      new ol.layer.Tile({
+        source: new ol.source.OSM()
+      })
+    ],
+    view: new ol.View({
+      center: [0, 0],
+      zoom: 2
+    })
   });
 
   form.addEventListener("submit", (event) => {
@@ -51,5 +51,3 @@
     });
   });
 </script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-  integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZ
