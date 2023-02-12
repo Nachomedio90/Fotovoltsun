@@ -1,0 +1,35 @@
+<div>
+  <h1>Photovoltaic Energy Generation Calculator</h1>
+  <p>
+    Use this calculator to determine the potential for photovoltaic energy generation based on the statistical heliophany data of your exact geographic location.
+  </p>
+  <form>
+    <input type="text" name="location" placeholder="Enter Your Location..." required />
+    <a href="#" id="select-location-link">Select location on map</a>
+    <input type="text" name="month" placeholder="Enter Month..." required />
+    <button type="submit">Calculate</button>
+  </form>
+</div>
+<script>
+  const form = document.querySelector("form");
+  const selectLocationLink = document.querySelector("#select-location-link");
+
+  selectLocationLink.addEventListener("click", (event) => {
+    event.preventDefault();
+    window.open("https://www.google.com/maps/");
+  });
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const location = form.querySelector("input[name=location]").value;
+    const month = form.querySelector("input[name=month]").value;
+    fetch("/calculate-photovoltaic-energy-generation", {
+      method: "POST",
+      body: { location, month }
+    }).then((response) => {
+      response.json().then((data) => {
+        // Handle data here
+      });
+    });
+  });
+</script>
